@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import banner1 from "./assets/banner1.jpg"
 import axios from "axios";
-import Header from "./Header";
-import Content from "./Content";
-const Login = ({ onLoginSuccess }) => {
+import { AuthContext } from "./AuthContext"; // Import AuthContext
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+const Login = () => {
+    const navigate = useNavigate();
     const [userName, setUserName] = useState("")
     const [passWord, setPassword] = useState("")
-    const [isLogin, setIsLogin] = useState(true)
-    const loginFail = (!isLogin) ? (<><p className="text-red-700 text-xs -ml-10">Tên đăng nhập hoặc mật khẩu không hợp lệ</p></>) : (null);
+    const { isLogin, setIsLogin } = useContext(AuthContext);
+    const [isLoginFailed, setLoginFailed] = useState(false);
+    const loginFail = (isLoginFailed) ? (<><p className="text-red-700 text-xs -ml-10">Tên đăng nhập hoặc mật khẩu không hợp lệ</p></>) : (null);
     const getUserName = (event) => {
         setUserName(event.target.value);
     }
@@ -17,30 +20,51 @@ const Login = ({ onLoginSuccess }) => {
     }
 
     function sendRequest() {
-        axios.post("http://localhost:8080/api/v1/auth/login", {
-            username: userName,
-            password: passWord
-        })
+        axios.post(
+            "http://localhost:8080/api/v1/auth/login",
+            {
+                username: userName,
+                password: passWord
+            },
+            {
+                withCredentials: true // ✅ FIXED SYNTAX
+            }
+        )
             .then(response => {
-                console.log("login successfully ", response.data)
+                console.log("Login successful: ", response.data);
                 const token = response.data.data.accessToken;
+                const fullName = response.data.data.user.fullName;
+
                 if (token) {
-                    localStorage.setItem("accessToken", token);
-                    setIsLogin(true)
-                    onLoginSuccess();
+                    Cookies.set("fullName", fullName, { expires: 1 });
+
+                    // Set Secure flag only in production
+                    Cookies.set("accessToken", token, {
+                        expires: 1,
+                        secure: window.location.protocol === "https:", // ✅ FIXED
+                        sameSite: window.location.protocol === "https:" ? "None" : "Lax" // ✅ FIXED
+                    });
+
+                    setIsLogin(true);
+                    navigate("/");
                 }
             })
             .catch(error => {
                 if (error.response && error.response.status === 400) {
-                    setIsLogin(false);
+                    setLoginFailed(true);
                 }
             });
     }
 
+
+
+    function handle_signup() {
+        navigate("/signup");
+    }
     return (
         <>
             <div className="flex h-screen w-screen">
-                <div className="flex w-[600px] flex-col items-center gap-3 scale-105 mt-18">
+                <div className="flex w-[600px] flex-col items-center gap-3 scale-105 mt-13">
                     <h2 className="mt-8 text-4xl font-bold text-blue-600">UTEX</h2>
                     <h2 className="text-base">Login to your account</h2>
                     <p className="text-xs font-light text-gray-400">Welcome to UTEX</p>
@@ -65,6 +89,7 @@ const Login = ({ onLoginSuccess }) => {
                         <img src="https://icons.veryicon.com/png/o/miscellaneous/remitting-country-linear-icon/password-148.png" className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 transform opacity-60" alt="Password Icon" />
                         <input onChange={getPassword} type="password" placeholder="Enter your password" className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-xs focus:outline-none" />
                     </div>
+
                     {loginFail}
                     <div className="flex flex-row items-center text-xs gap-12 mt-2">
                         <input type="checkbox" className="h-3.5 w-3.5" />
@@ -74,6 +99,10 @@ const Login = ({ onLoginSuccess }) => {
 
                     <button onClick={sendRequest} className=" cursor-pointer text-sm rounded-2xl bg-blue-600 px-30 py-2  text-white font-medium hover:bg-blue-700 transition active:bg-blue-800">
                         Login
+                    </button>
+
+                    <button onClick={handle_signup} className="border border-solid cursor-pointer text-sm rounded-2xl bg-white px-30 py-2  text-blue-600 font-medium hover:bg-blue-700 hover:text-white transition active:bg-blue-800 active:text-white">
+                        Signup
                     </button>
                 </div>
 

@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Search, ShoppingCart, Globe } from 'lucide-react';
-
+import { AuthContext } from "./AuthContext";
 const Header = () => {
-    const [isLogin, setLogin] = useState(true);
+    const { isLogin, setIsLogin } = useContext(AuthContext);
+    const [fullName, setFullName] = useState(null);
+
+    useEffect(() => {
+        console.log(localStorage)
+        const name = localStorage.getItem("fullName");
+        if (name) {
+            setFullName(name);
+        }
+    }, [])
     const info_component = !isLogin ? (
         <>
             <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">
@@ -12,7 +21,7 @@ const Header = () => {
                 Sign up
             </button></>
     ) : (<div className="bg-blue-500 text-white px-4 py-2 rounded-2xl text-l font-semibold">
-        ANH KIET
+        {fullName}
     </div>)
 
 
