@@ -4,12 +4,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './HomePage';
 import Login from './Login';
 import Signup from './Signup';
-import { AuthProvider } from "./AuthContext"; // Import the context provider
-import EmailVerification from './EmailVerification';
-import CourseDetail from './CourseDetail';
+import { AuthProvider } from "./AuthContext";
 import CourseOverview from './CourseOverview';
 import './index.css'
-
+import CourseLesson from './CourseLesson';
+import Lesson from './Lesson';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -27,6 +26,11 @@ const router = createBrowserRouter([
 
     path: '/courses/:id',
     element: <CourseOverview></CourseOverview>
+  }
+  , {
+
+    path: '/lessons/:courseId/:userid',
+    element: <CourseLesson></CourseLesson>
   }
 
 ])

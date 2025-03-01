@@ -1,20 +1,20 @@
 import { useEffect, useState, useContext } from "react";
-import api from "./api";
-import { AuthContext } from "./AuthContext";
+import api from "./axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 function Content({ courses }) {
     const navigate = useNavigate();
-    const { isLogin, setIsLogin } = useContext(AuthContext);
+    const { isAuthenticated, login, logout } = useAuth()
 
     function handleChooseCourse(courseID) {
-        navigate(`/courses/${courseID}`);  // Fix: "/courses/" instead of "/course/"
+        navigate(`/courses/${courseID}`);
     }
 
     const courses_container = courses.map(course => course.status == "ACTIVE" ? (<>
         <div className="flex flex-col gap-0.5 text-l">
             <img src="https://chonlink.com/wp-content/uploads/2022/08/Course-Hero.jpg" alt="" />
             <p className="text-2xl font-bold">{course.name}</p>
-            <p className="text-xl text-gray-400">{course.instructor.name}</p>
+            <p className="text-xl text-gray-400">{course.instructorName}</p>
             <button onClick={() => handleChooseCourse(course.id)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-bold">
                 Enroll
             </button>

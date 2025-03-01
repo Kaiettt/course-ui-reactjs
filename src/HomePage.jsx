@@ -1,24 +1,28 @@
 import { useState, useContext, useEffect } from "react"
 import Content from "./Content"
 import Header from "./Header"
-import api from "./api";
-import { AuthContext } from "./AuthContext";
+import { useAuth } from "./AuthContext";
+import axiosInstance from "./axiosConfig";
 function HomePage() {
     const [courses, setCourses] = useState([]);
-    const { isLogin, setIsLogin } = useContext(AuthContext);
+    const { isAuthenticated, login, logout, API_URL } = useAuth()
     useEffect(() => {
-        setCourses(courses)
-        api.get("/courses")
-            .then(response => {
-                setIsLogin(true)
-                setCourses(response.data.data.result)
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    }, [])
+        const fetchData = async () => {
+            try {
+                const response = await axiosInstance.get(`${API_URL}/courses`);
+                setCourses(response.data.data.result);
+                print(response.data.data.result)
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+            }
+        };
+        fetchData();
+    }, []);
     return (<>
         <Header></Header>
         <Content courses={courses}></Content>
     </>)
+
 }
 
 export default HomePage
