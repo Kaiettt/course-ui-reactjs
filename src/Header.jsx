@@ -3,6 +3,7 @@ import { Search, ShoppingCart, Globe } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 const Header = () => {
+    const navigate = useNavigate();
     const { isAuthenticated, login, logout, API_URL, userInfo } = useAuth();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -84,11 +85,13 @@ const Header = () => {
             )}
         </div>
     );
-
+    function loadHomePage() {
+        nagivate("/")
+    }
     return (
         <header className="flex items-center justify-between px-6 py-4 shadow-sm bg-white">
             <div className="flex items-center gap-4">
-                <div className="text-2xl font-bold">UTEX</div>
+                <div onClick={loadHomePage} className="cursor-pointer text-2xl font-bold">UTEX</div>
                 <button className="text-sm text-gray-600 hover:text-gray-900">Explore</button>
             </div>
 

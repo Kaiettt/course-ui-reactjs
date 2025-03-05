@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState, createContext, useContext } from "react";
 import axiosInstance from "./axiosConfig";
 import { useAuth } from "./AuthContext";
-
 // Create the context
 const CourseContext = createContext();
 
@@ -22,7 +21,8 @@ function CourseOverview() {
 
     // Fetch course data
     useEffect(() => {
-        setLoading(true);
+        if (id)
+            setLoading(true);
         axiosInstance.get(`${API_URL}/courses/${id}`)
             .then(response => {
                 setCourse(response.data.data);
