@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import Header from "./Header"
+import Header from "./Header";
 import Lesson from "./Lesson"
 import { useParams } from "react-router-dom";
 import axiosInstance from "./axiosConfig";

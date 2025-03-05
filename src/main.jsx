@@ -8,7 +8,8 @@ import { AuthProvider } from "./AuthContext";
 import CourseOverview from './CourseOverview';
 import './index.css'
 import CourseLesson from './CourseLesson';
-import Lesson from './Lesson';
+import QuizzResultReview from './quizz/QuizzResultReview';
+import QuizzOverView from './quizz/QuizzOverView';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
 
     path: '/lessons/:courseId/:userid',
     element: <CourseLesson></CourseLesson>
+  },
+  {
+    path: '/quizzes/:id',
+    element: <QuizzOverView></QuizzOverView>
   }
 
 ])
